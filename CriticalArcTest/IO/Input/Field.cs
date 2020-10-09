@@ -15,11 +15,13 @@ namespace CriticalArcTest.IO.Input
 
     public static bool InputObj(string keyPrefix, object obj, IDevice io, Utils.Log log)
     {
+      // get question details from configuration file
       Field[] fields = Field.AllFromConfig(keyPrefix, log);
       bool res = false;
 
       if (fields != null)
       {
+        // for each question, ask question and get answer
         foreach (Field inputField in fields)
         {
           if (inputField!=null)
@@ -38,11 +40,13 @@ namespace CriticalArcTest.IO.Input
     {
       Field[] fields = null;
       int i;
+      // identify how many questions there are
       string fieldCount = ConfigurationManager.AppSettings.Get(prefix + ".Count");
       if (fieldCount!=null)
       {
         int count = int.Parse(fieldCount);
 
+        // for each question get question details and add to array
         fields = new Field[count];
         for (i = 0; i < count; i++)
         {
@@ -61,6 +65,7 @@ namespace CriticalArcTest.IO.Input
     {
       Field field = null;
 
+      // get question details from config file
       string typeName = ConfigurationManager.AppSettings.Get(configKey + ".Type");
       string question = ConfigurationManager.AppSettings.Get(configKey + ".Question");
       string fieldName = ConfigurationManager.AppSettings.Get(configKey + ".FieldName");
@@ -69,6 +74,7 @@ namespace CriticalArcTest.IO.Input
       {
         try
         {
+          // create question of appropriate type and populate
           ObjectHandle obj = Activator.CreateInstance(null, typeName);
           field = (Field)obj.Unwrap();
           field.Question = question;
@@ -89,6 +95,7 @@ namespace CriticalArcTest.IO.Input
 
     public void WriteQuestion(IDevice io, Utils.Log log)
     {
+      // display question with default answer if user just presses enter
       io.WriteLine(Question + " " + this.GetDefaultDescription());
       Utils.Log.Write(log, "InputField.WriteQuestion(): Question is \"" + this.Question + "\"");
     }
@@ -97,12 +104,14 @@ namespace CriticalArcTest.IO.Input
     {
       object inputVal = null;
 
+      // keep asking user for data until a valid answer is given
       this.haveInput = false;
       while (!this.haveInput)
       {
         inputVal = this.Parse(io);
       }
 
+      // apply user answer to appropriate order field
       System.Reflection.PropertyInfo property = obj.GetType().GetProperty(this.FieldName);
       if (property != null)
       {

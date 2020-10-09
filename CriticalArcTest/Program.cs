@@ -24,12 +24,16 @@ namespace CriticalArcTest
     {
       Domain.Coffee exampleCoffee = new Domain.Coffee();
 
+      // ask user order questions and populate coffee order object
       bool dataInputOk = IO.Input.Field.InputObj(configKey, exampleCoffee, io, log);
+
+      // if valid data provided and item is of chargeable type show cost to user
       if (dataInputOk && exampleCoffee is Domain.IChargeable)
       {
         exampleCoffee.WriteCost(io, log);
       }
 
+      // log issues. TODO: log full exception details
       if (!dataInputOk)
       {
         io.WriteLine("Sorry. Seems something has gone wrong.");
